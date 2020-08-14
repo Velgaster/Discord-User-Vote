@@ -1,21 +1,21 @@
 # Discord-User-Vote
 A Discord bot to keep server chats friendly based on uservotes and blacklists.
 
-# Setup
-###clone the repo
+# Setup:
+##clone the repo
 ```
 git clone https://github.com/Velgaster/Discord-User-Vote
 cd Discord-User-Vote
 ```
 
-###set up the python virtual environment
-#####Linux
+##set up the python virtual environment:
+###Linux
 ```
 python3 -m venv venv
 source venv/bin/activate
 pip install -U -r requirements.txt
 ```
-#####Windows
+###Windows
 Make sure python3.x is your default system interpreter.
 ```
 python -m venv venv
@@ -36,8 +36,9 @@ In `cogs/scripts/settings.py` place the `TOKEN` and `OWNER_ID`
 # Usage
 make sure the venv is active. 
 
-To do so run `source venv/bin/activate` on Linux or `venv\Scripts\activate.bat` on Windows.
+to activate it, run `source venv/bin/activate` on Linux or `venv\Scripts\activate.bat` on Windows.
 
+(consider to make an alias for the activation command as a shortcut)
 
 run the bot with `screen` as background task:
 ```
