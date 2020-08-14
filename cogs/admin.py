@@ -1,5 +1,5 @@
 from discord.ext import commands
-from .scripts.utils import check_permission
+from .scripts.utils import admin, owner
 
 
 def setup(client):
@@ -10,7 +10,17 @@ class Admin(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @check_permission
     @commands.command()
+    @owner
+    async def change_owner(self, ctx, *args):
+        raise NotImplementedError
+
+    @commands.command()
+    @owner
+    async def change_owner(self, ctx, *args):
+        raise NotImplementedError
+
+    @commands.command()
+    @admin
     async def set(self, ctx, *args):
         raise NotImplementedError

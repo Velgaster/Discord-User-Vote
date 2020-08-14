@@ -10,7 +10,6 @@ def setup(client):
 class Voting(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.votes = {}
 
 
     @commands.Cog.listener()

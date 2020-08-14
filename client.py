@@ -1,11 +1,10 @@
 from cogs.scripts import settings
-from cogs.scripts.utils import check_permission
+from cogs.scripts.utils import admin
 import discord
 from discord.ext import commands
 import os
 
-TOKEN = settings.TOKEN
-client = commands.Bot(command_prefix=',', description=settings.BOT_DESCRIPTION)
+client = commands.Bot(command_prefix=settings.COMMAND_PREFIX, description=settings.BOT_DESCRIPTION)
 
 
 async def load(extension):
@@ -21,7 +20,7 @@ async def reload(ctx):
     await reload_all(ctx)
 
 
-@check_permission
+@admin
 async def reload_all(ctx):
     """reload all extensions. Admin command."""
     for name in os.listdir('./cogs'):
@@ -44,15 +43,11 @@ for filename in os.listdir('./cogs'):
 
 
 @client.event
-async def on_command_error(ctx, error):
-    await ctx.send(error)
-
-
-@client.event
 async def on_ready():
     print(f'Logged in as: {client.user.name}')
     print(f"Client ID: {client.user.id}")
     print('--------------------------')
     await client.change_presence(activity=discord.Game(name=settings.GAME_ACTIVITY_MESSAGE))
-client.run(TOKEN)
+
+client.run(settings.TOKEN)
 
