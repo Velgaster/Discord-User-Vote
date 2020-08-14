@@ -3,6 +3,7 @@ from .scripts.settings import *
 from .scripts.utils import event_log
 from time import time
 
+
 def setup(client):
     client.add_cog(Voting(client))
 

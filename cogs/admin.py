@@ -12,12 +12,12 @@ class Admin(commands.Cog):
 
     @commands.command()
     @owner
-    async def change_owner(self, ctx, *args):
+    async def change_bot_owner(self, ctx, *args):
         raise NotImplementedError
 
     @commands.command()
     @owner
-    async def change_owner(self, ctx, *args):
+    async def role(self, ctx, *args):
         raise NotImplementedError
 
     @commands.command()
