@@ -2,20 +2,20 @@
 A Discord bot to keep server chats friendly based on uservotes and blacklists.
 
 # Setup:
-##clone the repo
+## clone the repo
 ```
 git clone https://github.com/Velgaster/Discord-User-Vote
 cd Discord-User-Vote
 ```
 
-##set up the python virtual environment:
-###Linux
+## set up the python virtual environment:
+### Linux
 ```
 python3 -m venv venv
 source venv/bin/activate
 pip install -U -r requirements.txt
 ```
-###Windows
+### Windows
 Make sure python3.x is your default system interpreter.
 ```
 python -m venv venv
