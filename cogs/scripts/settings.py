@@ -1,26 +1,36 @@
-# This concept will be more generalized for multi-server use in the future
 from .utils import pickle_object, open_pickled_object
 import discord
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! #
+# --------------------- DON'T CHANGE ANY VALUES IN HERE! --------------------- #
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! #
 
 
 class Settings:
     def __init__(self):
         self.DESCRIPTION = "A simple helper to keep the chats friendly"
-        self.ACTIVITY_MESSAGE = "keep the chat friendly"
-        self.BOT_OWNER = None  # only this user can add or remove ADMINs using bot commands
-        self.BOT_ADMINS = []  # any role that need permission to change bot settings
-        self.LOG_CHANNEL = None  # To makes sense of it, set it to an isolated Admin-only channel
+        self.ACTIVITY = "keep the chat friendly"
+        self.LOG_CHANNEL = 0  # To makes sense of it, set it to an isolated Admin-only channel.
         self.PREFIX = ","
 
-        # Vote Settings
+        # vote Settings
         self.DAILY_VOTE_LIMIT = 24
         self.VOTE_COOLDOWN_MINUTES = 3
         self.VOTE_EMOTE = '❌'
         self.VOTES_UNTIL_DELETION = 5
 
-        # Add forbidden words here
+        # unwanted phrases
         self.BLACKLIST = []
         self.GRAYLIST = []
+
+    def set(self, key, value):
+        print(key, value)
+        obj = self.__getattribute__(key)
+        try:
+            self.__setattr__(key, type(obj)(value))  # breaks if vars not __init__() /w their required type!!!!!!
+        except TypeError as e:
+            print(e)
+            raise
 
     def embed(self):
         embed = discord.Embed()
@@ -32,13 +42,7 @@ class Settings:
 
     async def save(self, ctx):
         pickle_object(SETTINGS_FILE, self)
-        await ctx.send("Setting Updated.")
-
-    async def reset(self, ctx):
-        tmp = Settings()
-        self = tmp
-        pickle_object(SETTINGS_FILE, self)
-        await ctx.send("settings successfully reset.")
+        return await ctx.send("Setting Updated.", embed=self.embed())
 
 
 SETTINGS_FILE = 'settings.data'

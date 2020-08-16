@@ -1,40 +1,36 @@
 from discord.ext import commands
-from .scripts.utils import event_log
 from time import time
-
-from client import client as c
+import discord
 
 
 def setup(client):
     client.add_cog(Voting(client))
-    client.add_cog(KeyWordFilter(client))
 
 
 class Voting(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.votes = {}
+        self.log_ch = self.client.get_channel(self.client.SETTINGS.LOG_CHANNEL)
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         if user != self.client.user:
-            if reaction.emoji == c.SETTINGS.VOTE_EMOTE:
+            if reaction.emoji == self.client.SETTINGS.VOTE_EMOTE:
                 if user.id not in self.votes.keys():
                     self.votes[user.id] = time()
-                elif time() - self.votes[user.id] > c.SETTINGS.USER_VOTE_COOLDOWN_TIME_MINUTES * 60:
+                elif time() - self.votes[user.id] > self.client.SETTINGS.USER_VOTE_COOLDOWN_TIME_MINUTES * 60:
                     self.votes[user.id] = time()
-                if reaction.count >= c.SETTINGS.VOTES_REQURED_FOR_DELETION:
+                if reaction.count >= self.client.SETTINGS.VOTES_REQURED_FOR_DELETION:
                     ctx = await self.client.get_context(reaction.message)
-                    await event_log(ctx, reaction.message)
+                    await self.event_log(ctx, reaction.message, "a post was outvoted.")
                     await reaction.message.delete()
 
-
-class KeyWordFilter(commands.Cog):
-    def __init__(self, client):
-        self.client = client
-
-    @commands.Cog.listener()
-    async def on_message(self, msg):
-        if any(x in msg.content for x in c.SETTINGS.BLACKLIST):
-            ctx = await self.client.get_context(msg)
-            await event_log(ctx, msg)
+    async def event_log(self, ctx, msg, event):
+        embed = discord.Embed()
+        embed.colour = discord.Colour.red()
+        embed.title = event
+        embed.description = f'{msg.author} said:\n> `{msg.content}`'
+        for setting, value in zip(ctx.__dict__, ctx.__dict__.values()):
+            embed.add_field(name=setting, value=value, inline=True)
+        self.log_ch.send(embed=embed)

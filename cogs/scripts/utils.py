@@ -1,5 +1,4 @@
 import pickle
-
 # ------------------------------------------------------------------------------------
 # utils -> helper functions
 # ------------------------------------------------------------------------------------
@@ -24,7 +23,3 @@ def parse(args):
     kwargs = dict(i.split("=") for i in kwarg_list)
     args = tuple([arg for arg in args if "=" not in arg])
     return args, kwargs
-
-
-async def event_log(ctx, msg):
-    raise NotImplementedError
