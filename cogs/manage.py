@@ -2,6 +2,7 @@ from discord.ext import commands
 from .scripts.utils import apply
 from .scripts.settings import Settings
 import os
+import discord
 
 
 def setup(client):
@@ -11,14 +12,15 @@ def setup(client):
 class Manage(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.setting_msg = None
 
     @commands.command()
     @commands.is_owner()
     async def reset(self, ctx):
         rst = Settings()
         self.client.SETTINGS = rst
-        self.client.SETTINGS.SERVER_OWNER = str(ctx.guild.owner)
         await self.client.SETTINGS.save(ctx)
+        await self.update()
 
     @commands.command()
     @commands.is_owner()
@@ -46,18 +48,21 @@ class Manage(commands.Cog):
 
         operation = {
             'set': lambda x, y: self.client.SETTINGS.set(x, list(y) if len(y) > 1 else y[0]),
-            'add': lambda x, y: list.extend(self.client.SETTINGS.__getattribute__(x), list(y)),
+            'add': lambda x, y: list.extend(self.client.SETTINGS.__getattribute__(x),
+                                            [*map(lambda z: z.replace("-", ' '), list(y))]),
             'remove': lambda x, y: [list.remove(self.client.SETTINGS.__getattribute__(x), i) for i in y]
         }
 
         operation[mode](key, value)
         await self.try_del()
         self.setting_msg = await self.client.SETTINGS.save(ctx)
+        await self.update()
 
     @commands.command(aliases=['rl'])
     @commands.has_permissions(administrator=True)
     async def reload(self, ctx):
-        await self.reload_all(ctx)
+        await self.reload_all()
+        await self.update()
 
     async def load(self, extension):
         await self.client.load_extension(f'cogs.{extension}')
@@ -65,7 +70,7 @@ class Manage(commands.Cog):
     async def unload(self, extension):
         await self.client.unload_extension(f'cogs.{extension}')
 
-    async def reload_all(self, ctx):
+    async def reload_all(self):
         """reload all extensions. Admin command."""
         for name in os.listdir('./cogs'):
             if name.endswith('.py'):
@@ -81,6 +86,13 @@ class Manage(commands.Cog):
                 print('ok')
 
     async def try_del(self):
-        if hasattr(self, "setting_msg"):
+        try:
             await self.setting_msg.delete()
+        except Exception as e:
+            print(e)
+
+    async def update(self):
+        await self.client.change_presence(activity=discord.Game(name=self.client.SETTINGS.ACTIVITY))
+        self.client.description = self.client.SETTINGS.DESCRIPTION
+        await self.reload_all()
 

@@ -19,9 +19,10 @@ async def on_command_error(ctx, error):
 
 @client.event
 async def on_ready():
+    print('----------------------------')
     print(f'Logged in as: {client.user.name}')
     print(f"Client ID: {client.user.id}")
-    print('--------------------------')
+    print('----------------------------')
     await client.change_presence(activity=discord.Game(name=SETTINGS.ACTIVITY))
 
 from YOUR_LOCAL_FILES import YOUR_BOT_TOKEN
